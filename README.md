@@ -43,3 +43,13 @@ spring.datasource.username=your_username
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
 ```
+
+## Handling Line Endings
+To ensure consistent line endings across platforms, add the following to a `.gitattributes` file in the root of your project:
+
+```plaintext
+# Ensure all text files use LF line endings
+* text=auto
+```
+
+This ensures that line endings are converted to LF on commit, avoiding CRLF issues.
