@@ -11,8 +11,9 @@ import ak.entity.Vendor;
 public interface VendorRepository extends JpaRepository<Vendor, Long>{
 	 // Add a method to search by name, email, phone, or address
     List<Vendor> findByNameContainingOrEmailContainingOrPhoneContainingOrAddressContaining(
-        String name, String email, String phone, String address
+        String name, String email, String phone
     );
     
     List<Vendor> findByEmail(String email);
+    List<Vendor> findByPhone(String phone);
 }

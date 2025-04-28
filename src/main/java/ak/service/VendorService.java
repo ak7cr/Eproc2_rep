@@ -23,6 +23,10 @@ public class VendorService {
     public List<Vendor> findByEmailContaining(String email) {
         return vendorRepository.findByEmail(email);
     }
+    
+    public List<Vendor> findByPhoneContaining(String phone) {
+        return vendorRepository.findByPhone(phone);
+    }
 
     public Vendor findByEmail(String email) {
         return vendorRepository.findByEmail(email).stream().findFirst().orElse(null);
@@ -31,4 +35,6 @@ public class VendorService {
     public Vendor save(Vendor vendor) {
         return vendorRepository.save(vendor);
     }
+    
+   
 }

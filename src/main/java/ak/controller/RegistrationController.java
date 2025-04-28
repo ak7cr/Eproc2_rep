@@ -56,6 +56,8 @@ if (vendorService.findByEmail(vendor.getEmail()) != null) {
 }
 
 
+
+
         Vendor savedVendor = vendorService.registerVendor(vendor);
         return ResponseEntity.ok().body("Vendor registered successfully with ID: " + savedVendor.getId());
     }

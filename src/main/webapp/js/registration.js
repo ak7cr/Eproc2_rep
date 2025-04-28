@@ -1,72 +1,128 @@
-function validateForm() {
-    var email = document.getElementById("email").value;
-    // Check if email is valid
-    var emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(email)) {
-        alert("Please enter a valid email address.");
-        return false;
-    }
+async function validateForm() {
+  // grab elements
+  const name        = document.getElementById("name").value.trim();
+  const dept        = document.getElementById("department").value;
+  const dob         = document.getElementById("dob").value;
+  const joinDate    = document.getElementById("joiningDate").value;
+  const email       = document.getElementById("email").value.trim();
+  const phone       = document.getElementById("phone").value.trim();
+  const password    = document.getElementById("password").value;
 
-    var phone = document.getElementById("phone").value;
-    var phonePattern = /^[0-9]{10}$/; // Simple validation for 10 digits
-    if (!phonePattern.test(phone)) {
-        alert("Please enter a valid 10-digit phone number.");
-        return false;
-    }
+  // clear previous messages
+  const msgEl = document.getElementById("responseMessage");
+  msgEl.innerText = "";
 
-    return true; // If validation passes
+  // Name
+  if (!name) {
+    msgEl.innerText = "Please enter your name.";
+    return false;
+  }
+
+  // Department
+  if (!dept) {
+    msgEl.innerText = "Please select a department.";
+    return false;
+  }
+
+  // Date of Birth
+  if (!dob) {
+    msgEl.innerText = "Please select your date of birth.";
+    return false;
+  }
+  const dobDate = new Date(dob);
+  if (dobDate > new Date()) {
+    msgEl.innerText = "Date of birth cannot be in the future.";
+    return false;
+  }
+
+  // Joining Date
+  if (!joinDate) {
+    msgEl.innerText = "Please select your joining date.";
+    return false;
+  }
+  const joinDateObj = new Date(joinDate);
+  if (joinDateObj > new Date()) {
+    msgEl.innerText = "Joining date cannot be in the future.";
+    return false;
+  }
+  if (joinDateObj < dobDate) {
+    msgEl.innerText = "Joining date must be after your date of birth.";
+    return false;
+  }
+
+  // Email
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailPattern.test(email)) {
+    msgEl.innerText = "Please enter a valid email address.";
+    return false;
+  }
+
+  // Phone
+  const phonePattern = /^[0-9]{10}$/;
+  if (!phonePattern.test(phone)) {
+    msgEl.innerText = "Please enter a valid 10-digit phone number.";
+    return false;
+  }
+
+  // Password
+  if (password.length < 6) {
+    msgEl.innerText = "Password must be at least 6 characters long.";
+    return false;
+  }
+
+  return true;
 }
 
-function submitVendor() {
-    // Validate form before submission
-    if (!validateForm()) {
-        return;
-    }
+async function submitVendor() {
+  // validate first
+  if (!await validateForm()) return;
 
-    const formData = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value,
-        address: document.getElementById("address").value,
-        password: document.getElementById("password").value,
-    };
+  // disable form
+  const btn       = document.querySelector("#vendorForm button[type=submit]");
+  btn.disabled    = true;
+  btn.innerText   = "Registering…";
 
-    // Clear any previous response message
-    document.getElementById("responseMessage").innerText = "";
+  // collect payload
+  const payload = {
+    name:        document.getElementById("name").value.trim(),
+    department:  document.getElementById("department").value,
+    dob:         document.getElementById("dob").value,
+    joiningDate: document.getElementById("joiningDate").value,
+    email:       document.getElementById("email").value.trim(),
+    phone:       document.getElementById("phone").value.trim(),
+    password:    document.getElementById("password").value
+  };
 
-    // Basic form validation (if not done in validateForm())
-    if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.password) {
-        document.getElementById("responseMessage").innerText = "All fields are required.";
-        return;
-    }
+  const msgEl = document.getElementById("responseMessage");
+  msgEl.innerText = "";
 
-    // Show loading message
-    document.getElementById("responseMessage").innerText = "Submitting registration...";
-
-    fetch('http://localhost:8085/registration/vendors', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return response.json();
-        } else {
-            return response.text().then(text => { throw new Error(text); });
-        }
-    })
-    .then(data => {
-        if (data.success) {
-            document.getElementById("responseMessage").innerText = "Registration successful!";
-        } else {
-            document.getElementById("responseMessage").innerText = data.message || "Registration failed.";
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById("responseMessage").innerText = error.message || "An error occurred. Please try again.";
+  try {
+    const res = await fetch(`${request.getContextPath()}/registration/managers`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(payload)
     });
+
+    let result;
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      result = await res.json();
+    } else {
+      throw new Error(await res.text());
+    }
+
+    if (res.ok && result.success) {
+      msgEl.innerText = "Registration successful!";
+      btn.innerText = "Registered";
+    } else {
+      msgEl.innerText = result.message || "Registration failed.";
+      btn.disabled = false;
+      btn.innerText = "Register";
+    }
+  } catch (err) {
+    console.error(err);
+    msgEl.innerText = err.message || "An unexpected error occurred.";
+    btn.disabled   = false;
+    btn.innerText  = "Register";
+  }
 }

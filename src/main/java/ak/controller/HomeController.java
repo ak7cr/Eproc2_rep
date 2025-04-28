@@ -39,7 +39,7 @@ public class HomeController {
 
         if (search != null) {
             vendors = repository.findByNameContainingOrEmailContainingOrPhoneContainingOrAddressContaining(
-                search, search, search, search
+                search, search, search
             );
         }
 
@@ -52,11 +52,9 @@ public class HomeController {
                     vendors.sort(Comparator.comparing(Vendor::getEmail));
                     break;
                 case "phone":
-                    vendors.sort(Comparator.comparing(Vendor::getPhone));
+                    vendors.sort(Comparator.comparing(Vendor::getPhoneNo));
                     break;
-                case "address":
-                    vendors.sort(Comparator.comparing(Vendor::getAddress));
-                    break;
+                    
                 default:
                     vendors.sort(Comparator.comparing(Vendor::getId)); // Default sort by ID
                     break;

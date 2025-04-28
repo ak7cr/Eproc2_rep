@@ -25,14 +25,12 @@ public class SettingController {
     @PostMapping("/update")
     public ModelAndView updateVendor(@RequestParam("email") String email,
                                      @RequestParam("name") String name,
-                                     @RequestParam("phone") String phone,
-                                     @RequestParam("address") String address) {
+                                     @RequestParam("phone") String phone) {
         ModelAndView mav = new ModelAndView("settings");
         Vendor vendor = vendorService.findByEmail(email);
         if (vendor != null) {
             vendor.setName(name);
-            vendor.setPhone(phone);
-            vendor.setAddress(address);
+            vendor.setPhoneNo(phone);
             vendorService.save(vendor);
             mav.addObject("successMessage", "Details updated successfully.");
         } else {

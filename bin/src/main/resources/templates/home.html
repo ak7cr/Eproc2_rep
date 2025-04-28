@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .search-box {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            cursor: pointer;
+        }
+        th:hover {
+            background-color: #e7e7e7;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+	<div class="back">
+	            <a href="/registration/login">Back to Login</a>
+	</div>
+    <h1>Vendor Management</h1>
+    
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search vendors...">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th onclick="sortTable('name')">Name</th>
+                <th onclick="sortTable('email')">Email</th>
+                <th onclick="sortTable('phone')">Phone</th>
+                <th onclick="sortTable('address')">Address</th>
+            </tr>
+        </thead>
+        <tbody id="vendorTableBody">
+        </tbody>
+    </table>
+
+    <script>
+        let currentSort = '';
+
+        function loadVendors(search = '', sortBy = '') {
+            const url = `/home/vendors?${search ? 'search=' + search : ''}${sortBy ? '&sortBy=' + sortBy : ''}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(vendors => {
+                    const tbody = document.getElementById('vendorTableBody');
+                    tbody.innerHTML = '';
+                    vendors.forEach(vendor => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${vendor.name}</td>
+                                <td>${vendor.email}</td>
+                                <td>${vendor.phone}</td>
+                                <td>${vendor.address}</td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Error loading vendors:', error));
+        }
+
+        function sortTable(column) {
+            currentSort = column;
+            loadVendors(document.getElementById('searchInput').value, column);
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            loadVendors(e.target.value, currentSort);
+        });
+
+        // Initial load
+        loadVendors();
+    </script>
+</body>
+</html>
