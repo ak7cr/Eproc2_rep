@@ -24,8 +24,8 @@ public class VendorService {
         return vendorRepository.findByEmail(email);
     }
     
-    public List<Vendor> findByPhoneContaining(String phone) {
-        return vendorRepository.findByPhone(phone);
+    public List<Vendor> findByPhoneContaining(String phoneNo) {
+        return vendorRepository.findByPhoneNo(phoneNo);
     }
 
     public Vendor findByEmail(String email) {

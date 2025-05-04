@@ -38,7 +38,7 @@ public class HomeController {
         List<Vendor> vendors = repository.findAll();
 
         if (search != null) {
-            vendors = repository.findByNameContainingOrEmailContainingOrPhoneContainingOrAddressContaining(
+            vendors = repository.findByNameContainingOrEmailContainingOrPhoneNoContaining(
                 search, search, search
             );
         }
@@ -51,7 +51,7 @@ public class HomeController {
                 case "email":
                     vendors.sort(Comparator.comparing(Vendor::getEmail));
                     break;
-                case "phone":
+                case "phoneNo":
                     vendors.sort(Comparator.comparing(Vendor::getPhoneNo));
                     break;
                     
